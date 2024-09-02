@@ -1,20 +1,19 @@
-import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import * as http$1 from 'node:http';
-import http__default$1, { Server as Server$1 } from 'node:http';
+import * as node_http from 'node:http';
+import node_http__default from 'node:http';
 import * as node_https from 'node:https';
-import node_https__default, { Server } from 'node:https';
+import node_https__default from 'node:https';
 import * as node_zlib from 'node:zlib';
 import * as node_stream from 'node:stream';
 import { PassThrough, Transform } from 'node:stream';
 import * as node_buffer from 'node:buffer';
 import * as node_util from 'node:util';
 import * as node_url from 'node:url';
-import { pathToFileURL, fileURLToPath } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import * as node_net from 'node:net';
 import * as node_fs$1 from 'node:fs';
-import { promises as promises$1 } from 'node:fs';
 import * as node_path$1 from 'node:path';
 import { promises, existsSync } from 'fs';
-import { dirname as dirname$1, resolve as resolve$1, join } from 'path';
+import { dirname, resolve, join } from 'path';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import invariant from 'vinxi/lib/invariant';
 import { join as join$1, virtualId, handlerModule } from 'vinxi/lib/path';
@@ -32,7 +31,7 @@ function getDefaultExportFromNamespaceIfNotNamed (n) {
 
 var node$1 = {};
 
-const require$$3 = /*@__PURE__*/getDefaultExportFromNamespaceIfNotNamed(http$1);
+const require$$3 = /*@__PURE__*/getDefaultExportFromNamespaceIfNotNamed(node_http);
 
 const require$$4$1 = /*@__PURE__*/getDefaultExportFromNamespaceIfNotNamed(node_https);
 
@@ -78,76 +77,6 @@ Content-Type: ${R.type||"application/octet-stream"}\r
 
 var n=Object.defineProperty;var i$1=(r,o)=>n(r,"name",{value:o,configurable:!0});const node=node$1;var t=Object.defineProperty,a=i$1((r,o)=>t(r,"name",{value:o,configurable:!0}),"a");function e(r,o){if(!(r in globalThis))try{globalThis[r]=o;}catch{}}i$1(e,"e"),a(e,"polyfill"),e("fetch",node.fetch),e("Blob",node.Blob),e("File",node.File),e("FormData",node.FormData),e("Headers",node.Headers),e("Request",node.Request),e("Response",node.Response),e("AbortController",node.AbortController);
 
-const suspectProtoRx = /"(?:_|\\u0{2}5[Ff]){2}(?:p|\\u0{2}70)(?:r|\\u0{2}72)(?:o|\\u0{2}6[Ff])(?:t|\\u0{2}74)(?:o|\\u0{2}6[Ff])(?:_|\\u0{2}5[Ff]){2}"\s*:/;
-const suspectConstructorRx = /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/;
-const JsonSigRx = /^\s*["[{]|^\s*-?\d{1,16}(\.\d{1,17})?([Ee][+-]?\d+)?\s*$/;
-function jsonParseTransform(key, value) {
-  if (key === "__proto__" || key === "constructor" && value && typeof value === "object" && "prototype" in value) {
-    warnKeyDropped(key);
-    return;
-  }
-  return value;
-}
-function warnKeyDropped(key) {
-  console.warn(`[destr] Dropping "${key}" key to prevent prototype pollution.`);
-}
-function destr(value, options = {}) {
-  if (typeof value !== "string") {
-    return value;
-  }
-  const _value = value.trim();
-  if (
-    // eslint-disable-next-line unicorn/prefer-at
-    value[0] === '"' && value.endsWith('"') && !value.includes("\\")
-  ) {
-    return _value.slice(1, -1);
-  }
-  if (_value.length <= 9) {
-    const _lval = _value.toLowerCase();
-    if (_lval === "true") {
-      return true;
-    }
-    if (_lval === "false") {
-      return false;
-    }
-    if (_lval === "undefined") {
-      return void 0;
-    }
-    if (_lval === "null") {
-      return null;
-    }
-    if (_lval === "nan") {
-      return Number.NaN;
-    }
-    if (_lval === "infinity") {
-      return Number.POSITIVE_INFINITY;
-    }
-    if (_lval === "-infinity") {
-      return Number.NEGATIVE_INFINITY;
-    }
-  }
-  if (!JsonSigRx.test(value)) {
-    if (options.strict) {
-      throw new SyntaxError("[destr] Invalid JSON");
-    }
-    return value;
-  }
-  try {
-    if (suspectProtoRx.test(value) || suspectConstructorRx.test(value)) {
-      if (options.strict) {
-        throw new Error("[destr] Possible prototype pollution");
-      }
-      return JSON.parse(value, jsonParseTransform);
-    }
-    return JSON.parse(value);
-  } catch (error) {
-    if (options.strict) {
-      throw error;
-    }
-    return value;
-  }
-}
-
 const HASH_RE = /#/g;
 const AMPERSAND_RE = /&/g;
 const SLASH_RE = /\//g;
@@ -157,7 +86,6 @@ const ENC_CARET_RE = /%5e/gi;
 const ENC_BACKTICK_RE = /%60/gi;
 const ENC_PIPE_RE = /%7c/gi;
 const ENC_SPACE_RE = /%20/gi;
-const ENC_SLASH_RE = /%2f/gi;
 function encode(text) {
   return encodeURI("" + text).replace(ENC_PIPE_RE, "|");
 }
@@ -173,9 +101,6 @@ function decode(text = "") {
   } catch {
     return "" + text;
   }
-}
-function decodePath(text) {
-  return decode(text.replace(ENC_SLASH_RE, "%252F"));
 }
 function decodeQueryKey(text) {
   return decode(text.replace(PLUS_RE, " "));
@@ -1193,6 +1118,76 @@ function _routerNodeToTable(initialPath, initialNode) {
   }
   _addNode(initialPath, initialNode);
   return table;
+}
+
+const suspectProtoRx = /"(?:_|\\u0{2}5[Ff]){2}(?:p|\\u0{2}70)(?:r|\\u0{2}72)(?:o|\\u0{2}6[Ff])(?:t|\\u0{2}74)(?:o|\\u0{2}6[Ff])(?:_|\\u0{2}5[Ff]){2}"\s*:/;
+const suspectConstructorRx = /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/;
+const JsonSigRx = /^\s*["[{]|^\s*-?\d{1,16}(\.\d{1,17})?([Ee][+-]?\d+)?\s*$/;
+function jsonParseTransform(key, value) {
+  if (key === "__proto__" || key === "constructor" && value && typeof value === "object" && "prototype" in value) {
+    warnKeyDropped(key);
+    return;
+  }
+  return value;
+}
+function warnKeyDropped(key) {
+  console.warn(`[destr] Dropping "${key}" key to prevent prototype pollution.`);
+}
+function destr(value, options = {}) {
+  if (typeof value !== "string") {
+    return value;
+  }
+  const _value = value.trim();
+  if (
+    // eslint-disable-next-line unicorn/prefer-at
+    value[0] === '"' && value.endsWith('"') && !value.includes("\\")
+  ) {
+    return _value.slice(1, -1);
+  }
+  if (_value.length <= 9) {
+    const _lval = _value.toLowerCase();
+    if (_lval === "true") {
+      return true;
+    }
+    if (_lval === "false") {
+      return false;
+    }
+    if (_lval === "undefined") {
+      return void 0;
+    }
+    if (_lval === "null") {
+      return null;
+    }
+    if (_lval === "nan") {
+      return Number.NaN;
+    }
+    if (_lval === "infinity") {
+      return Number.POSITIVE_INFINITY;
+    }
+    if (_lval === "-infinity") {
+      return Number.NEGATIVE_INFINITY;
+    }
+  }
+  if (!JsonSigRx.test(value)) {
+    if (options.strict) {
+      throw new SyntaxError("[destr] Invalid JSON");
+    }
+    return value;
+  }
+  try {
+    if (suspectProtoRx.test(value) || suspectConstructorRx.test(value)) {
+      if (options.strict) {
+        throw new Error("[destr] Possible prototype pollution");
+      }
+      return JSON.parse(value, jsonParseTransform);
+    }
+    return JSON.parse(value);
+  } catch (error) {
+    if (options.strict) {
+      throw error;
+    }
+    return value;
+  }
 }
 
 function isPlainObject(value) {
@@ -2333,9 +2328,6 @@ function sendRedirect(event, location, code = 302) {
 function getResponseHeaders(event) {
   return event.node.res.getHeaders();
 }
-function getResponseHeader(event, name) {
-  return event.node.res.getHeader(name);
-}
 function setResponseHeaders(event, headers) {
   for (const [name, value] of Object.entries(headers)) {
     event.node.res.setHeader(
@@ -2347,9 +2339,6 @@ function setResponseHeaders(event, headers) {
 const setHeaders = setResponseHeaders;
 function setResponseHeader(event, name, value) {
   event.node.res.setHeader(name, value);
-}
-function removeResponseHeader(event, name) {
-  return event.node.res.removeHeader(name);
 }
 function isStream(data) {
   if (!data || typeof data !== "object") {
@@ -3442,7 +3431,7 @@ function createNodeFetch() {
     return l;
   }
   const agentOptions = { keepAlive: true };
-  const httpAgent = new http__default$1.Agent(agentOptions);
+  const httpAgent = new node_http__default.Agent(agentOptions);
   const httpsAgent = new node_https__default.Agent(agentOptions);
   const nodeFetchOptions = {
     agent(parsedURL) {
@@ -4493,7 +4482,7 @@ const normalizeKey = function normalizeKey(key) {
   return key.split("?")[0].replace(/[/\\]/g, ":").replace(/:+/g, ":").replace(/^:|:$/g, "");
 };
 
-const assets$1 = {
+const assets = {
   getKeys() {
     return Promise.resolve(Object.keys(_assets))
   },
@@ -4535,7 +4524,7 @@ function ignoreExists(err) {
   return err.code === "EEXIST" ? null : err;
 }
 async function writeFile(path, data, encoding) {
-  await ensuredir(dirname$1(path));
+  await ensuredir(dirname(path));
   return promises.writeFile(path, data, encoding);
 }
 function readFile(path, encoding) {
@@ -4551,7 +4540,7 @@ async function ensuredir(dir) {
   if (existsSync(dir)) {
     return;
   }
-  await ensuredir(dirname$1(dir)).catch(ignoreExists);
+  await ensuredir(dirname(dir)).catch(ignoreExists);
   await promises.mkdir(dir).catch(ignoreExists);
 }
 async function readdirRecursive(dir, ignore) {
@@ -4562,7 +4551,7 @@ async function readdirRecursive(dir, ignore) {
   const files = [];
   await Promise.all(
     entries.map(async (entry) => {
-      const entryPath = resolve$1(dir, entry.name);
+      const entryPath = resolve(dir, entry.name);
       if (entry.isDirectory()) {
         const dirFiles = await readdirRecursive(entryPath, ignore);
         files.push(...dirFiles.map((f) => entry.name + "/" + f));
@@ -4579,7 +4568,7 @@ async function rmRecursive(dir) {
   const entries = await readdir(dir);
   await Promise.all(
     entries.map((entry) => {
-      const entryPath = resolve$1(dir, entry.name);
+      const entryPath = resolve(dir, entry.name);
       if (entry.isDirectory()) {
         return rmRecursive(entryPath).then(() => promises.rmdir(entryPath));
       } else {
@@ -4595,7 +4584,7 @@ const unstorage_47drivers_47fs_45lite = defineDriver((opts = {}) => {
   if (!opts.base) {
     throw createRequiredError(DRIVER_NAME, "base");
   }
-  opts.base = resolve$1(opts.base);
+  opts.base = resolve(opts.base);
   const r = (key) => {
     if (PATH_TRAVERSE_RE.test(key)) {
       throw createError(
@@ -4654,7 +4643,7 @@ const unstorage_47drivers_47fs_45lite = defineDriver((opts = {}) => {
 
 const storage = createStorage({});
 
-storage.mount('/assets', assets$1);
+storage.mount('/assets', assets);
 
 storage.mount('data', unstorage_47drivers_47fs_45lite({"driver":"fsLite","base":"/Users/seanc/code/demo/start-with-build-output/.data/kv"}));
 
@@ -4993,20 +4982,6 @@ function normalizeError(error) {
     message
   };
 }
-function _captureError(error, type) {
-  console.error(`[nitro] [${type}]`, error);
-  useNitroApp().captureError(error, { tags: [type] });
-}
-function trapUnhandledNodeErrors() {
-  process.on(
-    "unhandledRejection",
-    (error) => _captureError(error, "unhandledRejection")
-  );
-  process.on(
-    "uncaughtException",
-    (error) => _captureError(error, "uncaughtException")
-  );
-}
 function joinHeaders(value) {
   return Array.isArray(value) ? value.join(", ") : String(value);
 }
@@ -5197,7 +5172,7 @@ const nitroAsyncContext = getContext("nitro-app", {
   AsyncLocalStorage: AsyncLocalStorage 
 });
 
-const appConfig = {"name":"vinxi","routers":[{"name":"public","type":"static","dir":"./public","base":"/","root":"/Users/seanc/code/demo/start-with-build-output","order":0,"outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/public"},{"name":"client","type":"client","target":"browser","handler":"app/client.tsx","base":"/_build","build":{"sourcemap":true},"root":"/Users/seanc/code/demo/start-with-build-output","outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/client","order":1},{"name":"api","type":"http","target":"server","base":"/api","handler":"app/api.ts","root":"/Users/seanc/code/demo/start-with-build-output","outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/api","order":2},{"name":"ssr","type":"http","target":"server","handler":"app/ssr.tsx","link":{"client":"client"},"root":"/Users/seanc/code/demo/start-with-build-output","base":"/","outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/ssr","order":3},{"name":"server","type":"http","target":"server","base":"/_server","handler":"node_modules/.pnpm/@tanstack+start@1.52.4_@types+node@22.5.2_ioredis@5.4.1_react-dom@18.3.1_react@18.3.1__react@_h6slhhqpluomh74klxhlhshtuy/node_modules/@tanstack/start/dist/esm/server-handler/index.js","root":"/Users/seanc/code/demo/start-with-build-output","outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/server","order":4}],"server":{"static":false,"preset":"node-server","experimental":{"asyncContext":true}},"root":"/Users/seanc/code/demo/start-with-build-output"};
+const appConfig = {"name":"vinxi","routers":[{"name":"public","type":"static","dir":"./public","base":"/","root":"/Users/seanc/code/demo/start-with-build-output","order":0,"outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/public"},{"name":"client","type":"client","target":"browser","handler":"app/client.tsx","base":"/_build","build":{"sourcemap":true},"root":"/Users/seanc/code/demo/start-with-build-output","outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/client","order":1},{"name":"api","type":"http","target":"server","base":"/api","handler":"app/api.ts","root":"/Users/seanc/code/demo/start-with-build-output","outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/api","order":2},{"name":"ssr","type":"http","target":"server","handler":"app/ssr.tsx","link":{"client":"client"},"root":"/Users/seanc/code/demo/start-with-build-output","base":"/","outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/ssr","order":3},{"name":"server","type":"http","target":"server","base":"/_server","handler":"node_modules/.pnpm/@tanstack+start@1.52.4_@types+node@22.5.2_ioredis@5.4.1_react-dom@18.3.1_react@18.3.1__react@_h6slhhqpluomh74klxhlhshtuy/node_modules/@tanstack/start/dist/esm/server-handler/index.js","root":"/Users/seanc/code/demo/start-with-build-output","outDir":"/Users/seanc/code/demo/start-with-build-output/.vinxi/build/server","order":4}],"server":{"static":false,"preset":"vercel","experimental":{"asyncContext":true}},"root":"/Users/seanc/code/demo/start-with-build-output"};
 				const buildManifest = {"client":{"_client-NT2iWb7E.js":{"file":"assets/client-NT2iWb7E.js","name":"client","dynamicImports":["app/routes/index.tsx?tsr-split","app/routes/index.tsx?tsr-split"]},"app/routes/index.tsx?tsr-split":{"file":"assets/index-DZB5xHgx.js","name":"index","src":"app/routes/index.tsx?tsr-split","isDynamicEntry":true,"imports":["_client-NT2iWb7E.js"]},"virtual:$vinxi/handler/client":{"file":"assets/client-lxKthFjb.js","name":"client","src":"virtual:$vinxi/handler/client","isEntry":true,"imports":["_client-NT2iWb7E.js"]}},"api":{"_index-UYf3HTpb.js":{"file":"assets/index-UYf3HTpb.js","name":"index","dynamicImports":["app/routes/api.hello.ts?pick=Route","app/routes/api.hello.ts?pick=Route"]},"app/routes/api.hello.ts?pick=Route":{"file":"api.hello.js","name":"api.hello","src":"app/routes/api.hello.ts?pick=Route","isEntry":true,"isDynamicEntry":true,"imports":["_index-UYf3HTpb.js"]},"virtual:$vinxi/handler/api":{"file":"api.js","name":"api","src":"virtual:$vinxi/handler/api","isEntry":true,"imports":["_index-UYf3HTpb.js"]}},"ssr":{"_ssr-DYjt9CFz.js":{"file":"assets/ssr-DYjt9CFz.js","name":"ssr","dynamicImports":["app/routes/index.tsx?tsr-split","app/routes/index.tsx?tsr-split"]},"app/routes/index.tsx?tsr-split":{"file":"assets/index-CMv6gFOn.js","name":"index","src":"app/routes/index.tsx?tsr-split","isDynamicEntry":true,"imports":["_ssr-DYjt9CFz.js"]},"virtual:$vinxi/handler/ssr":{"file":"ssr.js","name":"ssr","src":"virtual:$vinxi/handler/ssr","isEntry":true,"imports":["_ssr-DYjt9CFz.js"]}},"server":{"virtual:$vinxi/handler/server":{"file":"entry.mjs","name":"entry","src":"virtual:$vinxi/handler/server","isEntry":true}}};
 
 				const routeManifest = {"api":{}};
@@ -5525,258 +5500,6 @@ function renderHTMLError(error) {
 </html>
 `;
 }
-
-const assets = {
-  "/assets/index-CMv6gFOn.js": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"230-h2dvVYK0KfTGeIRyGshwOrH10ew\"",
-    "mtime": "2024-09-02T23:43:57.824Z",
-    "size": 560,
-    "path": "../public/assets/index-CMv6gFOn.js"
-  },
-  "/assets/ssr-DYjt9CFz.js": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"3d5d-GibMva2zsspVmicFisPxjBUTZhI\"",
-    "mtime": "2024-09-02T23:43:57.824Z",
-    "size": 15709,
-    "path": "../public/assets/ssr-DYjt9CFz.js"
-  },
-  "/_build/server-functions-manifest.json": {
-    "type": "application/json",
-    "etag": "\"19-U+evudgPW1yE9kGumdxd/vtvk2s\"",
-    "mtime": "2024-09-02T23:43:57.822Z",
-    "size": 25,
-    "path": "../public/_build/server-functions-manifest.json"
-  },
-  "/_build/.vite/manifest.json": {
-    "type": "application/json",
-    "etag": "\"28f-nVeDvr7NFP/KrUKnD9PHtSxIHyk\"",
-    "mtime": "2024-09-02T23:43:57.822Z",
-    "size": 655,
-    "path": "../public/_build/.vite/manifest.json"
-  },
-  "/_build/assets/client-NT2iWb7E.js": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"2e7f3-i7AsmkMF6VCMHMNdbwZGzWZ9UsM\"",
-    "mtime": "2024-09-02T23:43:57.822Z",
-    "size": 190451,
-    "path": "../public/_build/assets/client-NT2iWb7E.js"
-  },
-  "/_build/assets/client-lxKthFjb.js": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"3f-K+w8FJ/gfmx8/giU2jIEdFe2rik\"",
-    "mtime": "2024-09-02T23:43:57.822Z",
-    "size": 63,
-    "path": "../public/_build/assets/client-lxKthFjb.js"
-  },
-  "/_build/assets/index-DZB5xHgx.js": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"1a0-tEwKXNvJuJzM7EWjb7GtOcAJ/uc\"",
-    "mtime": "2024-09-02T23:43:57.822Z",
-    "size": 416,
-    "path": "../public/_build/assets/index-DZB5xHgx.js"
-  },
-  "/api/assets/index-UYf3HTpb.js": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"11c3-2dyrRbwwGLMCzwn6Y5Y4RtGnFSA\"",
-    "mtime": "2024-09-02T23:43:57.823Z",
-    "size": 4547,
-    "path": "../public/api/assets/index-UYf3HTpb.js"
-  }
-};
-
-const _DRIVE_LETTER_START_RE = /^[A-Za-z]:\//;
-function normalizeWindowsPath(input = "") {
-  if (!input) {
-    return input;
-  }
-  return input.replace(/\\/g, "/").replace(_DRIVE_LETTER_START_RE, (r) => r.toUpperCase());
-}
-const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
-const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
-function cwd() {
-  if (typeof process !== "undefined" && typeof process.cwd === "function") {
-    return process.cwd().replace(/\\/g, "/");
-  }
-  return "/";
-}
-const resolve = function(...arguments_) {
-  arguments_ = arguments_.map((argument) => normalizeWindowsPath(argument));
-  let resolvedPath = "";
-  let resolvedAbsolute = false;
-  for (let index = arguments_.length - 1; index >= -1 && !resolvedAbsolute; index--) {
-    const path = index >= 0 ? arguments_[index] : cwd();
-    if (!path || path.length === 0) {
-      continue;
-    }
-    resolvedPath = `${path}/${resolvedPath}`;
-    resolvedAbsolute = isAbsolute(path);
-  }
-  resolvedPath = normalizeString(resolvedPath, !resolvedAbsolute);
-  if (resolvedAbsolute && !isAbsolute(resolvedPath)) {
-    return `/${resolvedPath}`;
-  }
-  return resolvedPath.length > 0 ? resolvedPath : ".";
-};
-function normalizeString(path, allowAboveRoot) {
-  let res = "";
-  let lastSegmentLength = 0;
-  let lastSlash = -1;
-  let dots = 0;
-  let char = null;
-  for (let index = 0; index <= path.length; ++index) {
-    if (index < path.length) {
-      char = path[index];
-    } else if (char === "/") {
-      break;
-    } else {
-      char = "/";
-    }
-    if (char === "/") {
-      if (lastSlash === index - 1 || dots === 1) ; else if (dots === 2) {
-        if (res.length < 2 || lastSegmentLength !== 2 || res[res.length - 1] !== "." || res[res.length - 2] !== ".") {
-          if (res.length > 2) {
-            const lastSlashIndex = res.lastIndexOf("/");
-            if (lastSlashIndex === -1) {
-              res = "";
-              lastSegmentLength = 0;
-            } else {
-              res = res.slice(0, lastSlashIndex);
-              lastSegmentLength = res.length - 1 - res.lastIndexOf("/");
-            }
-            lastSlash = index;
-            dots = 0;
-            continue;
-          } else if (res.length > 0) {
-            res = "";
-            lastSegmentLength = 0;
-            lastSlash = index;
-            dots = 0;
-            continue;
-          }
-        }
-        if (allowAboveRoot) {
-          res += res.length > 0 ? "/.." : "..";
-          lastSegmentLength = 2;
-        }
-      } else {
-        if (res.length > 0) {
-          res += `/${path.slice(lastSlash + 1, index)}`;
-        } else {
-          res = path.slice(lastSlash + 1, index);
-        }
-        lastSegmentLength = index - lastSlash - 1;
-      }
-      lastSlash = index;
-      dots = 0;
-    } else if (char === "." && dots !== -1) {
-      ++dots;
-    } else {
-      dots = -1;
-    }
-  }
-  return res;
-}
-const isAbsolute = function(p) {
-  return _IS_ABSOLUTE_RE.test(p);
-};
-const dirname = function(p) {
-  const segments = normalizeWindowsPath(p).replace(/\/$/, "").split("/").slice(0, -1);
-  if (segments.length === 1 && _DRIVE_LETTER_RE.test(segments[0])) {
-    segments[0] += "/";
-  }
-  return segments.join("/") || (isAbsolute(p) ? "/" : ".");
-};
-
-function readAsset (id) {
-  const serverDir = dirname(fileURLToPath(globalThis._importMeta_.url));
-  return promises$1.readFile(resolve(serverDir, assets[id].path))
-}
-
-const publicAssetBases = {};
-
-function isPublicAssetURL(id = '') {
-  if (assets[id]) {
-    return true
-  }
-  for (const base in publicAssetBases) {
-    if (id.startsWith(base)) { return true }
-  }
-  return false
-}
-
-function getAsset (id) {
-  return assets[id]
-}
-
-const METHODS = /* @__PURE__ */ new Set(["HEAD", "GET"]);
-const EncodingMap = { gzip: ".gz", br: ".br" };
-const _f4b49z = eventHandler((event) => {
-  if (event.method && !METHODS.has(event.method)) {
-    return;
-  }
-  let id = decodePath(
-    withLeadingSlash(withoutTrailingSlash(parseURL(event.path).pathname))
-  );
-  let asset;
-  const encodingHeader = String(
-    getRequestHeader(event, "accept-encoding") || ""
-  );
-  const encodings = [
-    ...encodingHeader.split(",").map((e) => EncodingMap[e.trim()]).filter(Boolean).sort(),
-    ""
-  ];
-  if (encodings.length > 1) {
-    setResponseHeader(event, "Vary", "Accept-Encoding");
-  }
-  for (const encoding of encodings) {
-    for (const _id of [id + encoding, joinURL(id, "index.html" + encoding)]) {
-      const _asset = getAsset(_id);
-      if (_asset) {
-        asset = _asset;
-        id = _id;
-        break;
-      }
-    }
-  }
-  if (!asset) {
-    if (isPublicAssetURL(id)) {
-      removeResponseHeader(event, "Cache-Control");
-      throw createError$1({
-        statusMessage: "Cannot find static asset " + id,
-        statusCode: 404
-      });
-    }
-    return;
-  }
-  const ifNotMatch = getRequestHeader(event, "if-none-match") === asset.etag;
-  if (ifNotMatch) {
-    setResponseStatus(event, 304, "Not Modified");
-    return "";
-  }
-  const ifModifiedSinceH = getRequestHeader(event, "if-modified-since");
-  const mtimeDate = new Date(asset.mtime);
-  if (ifModifiedSinceH && asset.mtime && new Date(ifModifiedSinceH) >= mtimeDate) {
-    setResponseStatus(event, 304, "Not Modified");
-    return "";
-  }
-  if (asset.type && !getResponseHeader(event, "Content-Type")) {
-    setResponseHeader(event, "Content-Type", asset.type);
-  }
-  if (asset.etag && !getResponseHeader(event, "ETag")) {
-    setResponseHeader(event, "ETag", asset.etag);
-  }
-  if (asset.mtime && !getResponseHeader(event, "Last-Modified")) {
-    setResponseHeader(event, "Last-Modified", mtimeDate.toUTCString());
-  }
-  if (asset.encoding && !getResponseHeader(event, "Content-Encoding")) {
-    setResponseHeader(event, "Content-Encoding", asset.encoding);
-  }
-  if (asset.size > 0 && !getResponseHeader(event, "Content-Length")) {
-    setResponseHeader(event, "Content-Length", asset.size);
-  }
-  return readAsset(id);
-});
 
 var O$1="Invariant failed";function P$1(e,t){if(!e)throw new Error(O$1)}function j$1(e={}){let t,n=!1;const a=r=>{if(t&&t!==r)throw new Error("Context conflict")};let o;if(e.asyncContext){const r=e.AsyncLocalStorage||globalThis.AsyncLocalStorage;r?o=new r:console.warn("[unctx] `AsyncLocalStorage` is not provided.");}const l=()=>{if(o&&t===void 0){const r=o.getStore();if(r!==void 0)return r}return t};return {use:()=>{const r=l();if(r===void 0)throw new Error("Context is not available");return r},tryUse:()=>l(),set:(r,s)=>{s||a(r),t=r,n=!0;},unset:()=>{t=void 0,n=!1;},call:(r,s)=>{a(r),t=r;try{return o?o.run(r,s):s()}finally{n||(t=void 0);}},async callAsync(r,s){t=r;const f=()=>{t=r;},d=()=>t===r?f:void 0;x$1.add(d);try{const u=o?o.run(r,s):s();return n||(t=void 0),await u}finally{x$1.delete(d);}}}}function U$2(e={}){const t={};return {get(n,a={}){return t[n]||(t[n]=j$1({...e,...a})),t[n],t[n]}}}const y$2=typeof globalThis<"u"?globalThis:typeof self<"u"?self:typeof global<"u"?global:{},S$1="__unctx__",W$1=y$2[S$1]||(y$2[S$1]=U$2()),q$2=(e,t={})=>W$1.get(e,t),b$2="__unctx_async_handlers__",x$1=y$2[b$2]||(y$2[b$2]=new Set);function J(e){let t;const n=E$2(e),a={duplex:"half",method:e.method,headers:e.headers};return e.node.req.body instanceof ArrayBuffer?new Request(n,{...a,body:e.node.req.body}):new Request(n,{...a,get body(){return t||(t=K$2(e),t)}})}function M(e){return e.web??={request:J(e),url:E$2(e)},e.web.request}function $$1(){return z()}const T$1=Symbol("$HTTPEvent");function D$1(e){return typeof e=="object"&&(e instanceof H3Event||e?.[T$1]instanceof H3Event||e?.__is_event__===!0)}function C$2(e){return function(...t){let n=t[0];if(D$1(n))t[0]=n instanceof H3Event||n.__is_event__?n:n[T$1];else {if(!globalThis.app.config.server.experimental?.asyncContext)throw new Error("AsyncLocalStorage was not enabled. Use the `server.experimental.asyncContext: true` option in your app configuration to enable it. Or, pass the instance of HTTPEvent that you have as the first argument to the function.");if(n=$$1(),!n)throw new Error("No HTTPEvent found in AsyncLocalStorage. Make sure you are using the function within the server runtime.");t.unshift(n);}return e(...t)}}const E$2=C$2(getRequestURL),K$2=C$2(getRequestWebStream);function B$2(){return q$2("nitro-app",{asyncContext:!!globalThis.app.config.server.experimental?.asyncContext,AsyncLocalStorage:AsyncLocalStorage})}function z(){return B$2().use().event}function G$2(e){return globalThis.MANIFEST[e]}const v="server-fn-return-type",h$1="server-fn-payload-type",ee=eventHandler(Q$1);async function Q$1(e){return V$1(M(e))}async function V$1(e,t){var n,a;const o=e.method,l=new URL(e.url,"http://localhost:3000"),r=Object.fromEntries(new URLSearchParams(l.search).entries()),s=r._serverFnId,f=r._serverFnName;if(!s||!f)throw new Error("Invalid request");P$1(typeof s=="string");const d=(a=await((n=G$2("server").chunks[s])==null?void 0:n.import()))==null?void 0:a[f],u=await(async()=>{try{const i=await(async()=>{var w;return e.headers.get(h$1)==="payload"?[o.toLowerCase()==="get"?(()=>{var p;return (p=defaultParseSearch(l.search))==null?void 0:p.payload})():await e.json(),{method:o,request:e}]:e.headers.get(h$1)==="formData"||(w=e.headers.get("Content-Type"))!=null&&w.includes("multipart/form-data")?[o.toLowerCase()==="get"?(()=>{const{_serverFnId:p,_serverFnName:X,payload:L}=r;return L})():await e.formData(),{method:o,request:e}]:e.headers.get(h$1)==="request"?[e,{method:o,request:e}]:await e.json()})(),c=await d(...i);return c instanceof Response?c:isRedirect$1(c)||isNotFound(c)?R$1(c):new Response(c!==void 0?JSON.stringify(c):void 0,{status:200,headers:{"Content-Type":"application/json",[v]:"json"}})}catch(i){return i instanceof Response?i:isRedirect$1(i)||isNotFound(i)?R$1(i):(console.error("Server Fn Error!"),console.error(i),console.info(),new Response(JSON.stringify(i),{status:500,headers:{"Content-Type":"application/json",[v]:"error"}}))}})();if(u.status===200&&u.headers.get("Content-Type")==="application/json"){const c=await u.clone().text();c&&JSON.stringify(JSON.parse(c));}return u}function R$1(e){const{headers:t,...n}=e;return new Response(JSON.stringify(n),{status:200,headers:{"Content-Type":"application/json",[v]:"json",...e.headers||{}}})}
 
@@ -6372,7 +6095,6 @@ function Ot() {
 const Zt = wt({ createRouter: Ot, getRouterManifest: Pt })(jt);
 
 const handlers = [
-  { route: '', handler: _f4b49z, lazy: false, middleware: true, method: undefined },
   { route: '/_server', handler: ee, lazy: false, middleware: true, method: undefined },
   { route: '/api', handler: d, lazy: false, middleware: true, method: undefined },
   { route: '/', handler: Zt, lazy: false, middleware: true, method: undefined }
@@ -6507,254 +6229,17 @@ function createNitroApp() {
 const nitroApp = createNitroApp();
 const useNitroApp = () => nitroApp;
 
-const debug = (...args) => {
-};
-function GracefulShutdown(server, opts) {
-  opts = opts || {};
-  const options = Object.assign(
-    {
-      signals: "SIGINT SIGTERM",
-      timeout: 3e4,
-      development: false,
-      forceExit: true,
-      onShutdown: (signal) => Promise.resolve(signal),
-      preShutdown: (signal) => Promise.resolve(signal)
-    },
-    opts
-  );
-  let isShuttingDown = false;
-  const connections = {};
-  let connectionCounter = 0;
-  const secureConnections = {};
-  let secureConnectionCounter = 0;
-  let failed = false;
-  let finalRun = false;
-  function onceFactory() {
-    let called = false;
-    return (emitter, events, callback) => {
-      function call() {
-        if (!called) {
-          called = true;
-          return Reflect.apply(callback, this, arguments);
-        }
-      }
-      for (const e of events) {
-        emitter.on(e, call);
-      }
-    };
-  }
-  const signals = options.signals.split(" ").map((s) => s.trim()).filter((s) => s.length > 0);
-  const once = onceFactory();
-  once(process, signals, (signal) => {
-    shutdown(signal).then(() => {
-      if (options.forceExit) {
-        process.exit(failed ? 1 : 0);
-      }
-    }).catch((err) => {
-      process.exit(1);
-    });
-  });
-  function isFunction(functionToCheck) {
-    const getType = Object.prototype.toString.call(functionToCheck);
-    return /^\[object\s([A-Za-z]+)?Function]$/.test(getType);
-  }
-  function destroy(socket, force = false) {
-    if (socket._isIdle && isShuttingDown || force) {
-      socket.destroy();
-      if (socket.server instanceof http__default$1.Server) {
-        delete connections[socket._connectionId];
-      } else {
-        delete secureConnections[socket._connectionId];
-      }
+const handler = toNodeListener(nitroApp.h3App);
+const vercel = (function(req, res) {
+  const query = req.headers["x-now-route-matches"];
+  if (query) {
+    const { url } = parseQuery(query);
+    if (url) {
+      req.url = url;
     }
   }
-  function destroyAllConnections(force = false) {
-    for (const key of Object.keys(connections)) {
-      const socket = connections[key];
-      const serverResponse = socket._httpMessage;
-      if (serverResponse && !force) {
-        if (!serverResponse.headersSent) {
-          serverResponse.setHeader("connection", "close");
-        }
-      } else {
-        destroy(socket);
-      }
-    }
-    for (const key of Object.keys(secureConnections)) {
-      const socket = secureConnections[key];
-      const serverResponse = socket._httpMessage;
-      if (serverResponse && !force) {
-        if (!serverResponse.headersSent) {
-          serverResponse.setHeader("connection", "close");
-        }
-      } else {
-        destroy(socket);
-      }
-    }
-  }
-  server.on("request", function(req, res) {
-    req.socket._isIdle = false;
-    if (isShuttingDown && !res.headersSent) {
-      res.setHeader("connection", "close");
-    }
-    res.on("finish", function() {
-      req.socket._isIdle = true;
-      destroy(req.socket);
-    });
-  });
-  server.on("connection", function(socket) {
-    if (isShuttingDown) {
-      socket.destroy();
-    } else {
-      const id = connectionCounter++;
-      socket._isIdle = true;
-      socket._connectionId = id;
-      connections[id] = socket;
-      socket.once("close", () => {
-        delete connections[socket._connectionId];
-      });
-    }
-  });
-  server.on("secureConnection", (socket) => {
-    if (isShuttingDown) {
-      socket.destroy();
-    } else {
-      const id = secureConnectionCounter++;
-      socket._isIdle = true;
-      socket._connectionId = id;
-      secureConnections[id] = socket;
-      socket.once("close", () => {
-        delete secureConnections[socket._connectionId];
-      });
-    }
-  });
-  process.on("close", function() {
-  });
-  function shutdown(sig) {
-    function cleanupHttp() {
-      destroyAllConnections();
-      return new Promise((resolve, reject) => {
-        server.close((err) => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(true);
-        });
-      });
-    }
-    if (options.development) {
-      return process.exit(0);
-    }
-    function finalHandler() {
-      if (!finalRun) {
-        finalRun = true;
-        if (options.finally && isFunction(options.finally)) {
-          options.finally();
-        }
-      }
-      return Promise.resolve();
-    }
-    function waitForReadyToShutDown(totalNumInterval) {
-      if (totalNumInterval === 0) {
-        debug(
-          `Could not close connections in time (${options.timeout}ms), will forcefully shut down`
-        );
-        return Promise.resolve(true);
-      }
-      const allConnectionsClosed = Object.keys(connections).length === 0 && Object.keys(secureConnections).length === 0;
-      if (allConnectionsClosed) {
-        return Promise.resolve(false);
-      }
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(waitForReadyToShutDown(totalNumInterval - 1));
-        }, 250);
-      });
-    }
-    if (isShuttingDown) {
-      return Promise.resolve();
-    }
-    return options.preShutdown(sig).then(() => {
-      isShuttingDown = true;
-      cleanupHttp();
-    }).then(() => {
-      const pollIterations = options.timeout ? Math.round(options.timeout / 250) : 0;
-      return waitForReadyToShutDown(pollIterations);
-    }).then((force) => {
-      if (force) {
-        destroyAllConnections(force);
-      }
-      return options.onShutdown(sig);
-    }).then(finalHandler).catch((err) => {
-      const errString = typeof err === "string" ? err : JSON.stringify(err);
-      failed = true;
-      throw errString;
-    });
-  }
-  function shutdownManual() {
-    return shutdown("manual");
-  }
-  return shutdownManual;
-}
-
-function getGracefulShutdownConfig() {
-  return {
-    disabled: !!process.env.NITRO_SHUTDOWN_DISABLED,
-    signals: (process.env.NITRO_SHUTDOWN_SIGNALS || "SIGTERM SIGINT").split(" ").map((s) => s.trim()),
-    timeout: Number.parseInt(process.env.NITRO_SHUTDOWN_TIMEOUT, 10) || 3e4,
-    forceExit: !process.env.NITRO_SHUTDOWN_NO_FORCE_EXIT
-  };
-}
-function setupGracefulShutdown(listener, nitroApp) {
-  const shutdownConfig = getGracefulShutdownConfig();
-  if (shutdownConfig.disabled) {
-    return;
-  }
-  GracefulShutdown(listener, {
-    signals: shutdownConfig.signals.join(" "),
-    timeout: shutdownConfig.timeout,
-    forceExit: shutdownConfig.forceExit,
-    onShutdown: async () => {
-      await new Promise((resolve) => {
-        const timeout = setTimeout(() => {
-          console.warn("Graceful shutdown timeout, force exiting...");
-          resolve();
-        }, shutdownConfig.timeout);
-        nitroApp.hooks.callHook("close").catch((err) => {
-          console.error(err);
-        }).finally(() => {
-          clearTimeout(timeout);
-          resolve();
-        });
-      });
-    }
-  });
-}
-
-const cert = process.env.NITRO_SSL_CERT;
-const key = process.env.NITRO_SSL_KEY;
-const server = cert && key ? new Server({ key, cert }, toNodeListener(nitroApp.h3App)) : new Server$1(toNodeListener(nitroApp.h3App));
-const port = destr(process.env.NITRO_PORT || process.env.PORT) || 3e3;
-const host = process.env.NITRO_HOST || process.env.HOST;
-const path = process.env.NITRO_UNIX_SOCKET;
-const listener = server.listen(path ? { path } : { port, host }, (err) => {
-  if (err) {
-    console.error(err);
-    process.exit(1);
-  }
-  const protocol = cert && key ? "https" : "http";
-  const addressInfo = listener.address();
-  if (typeof addressInfo === "string") {
-    console.log(`Listening on unix socket ${addressInfo}`);
-    return;
-  }
-  const baseURL = (useRuntimeConfig().app.baseURL || "").replace(/\/$/, "");
-  const url = `${protocol}://${addressInfo.family === "IPv6" ? `[${addressInfo.address}]` : addressInfo.address}:${addressInfo.port}${baseURL}`;
-  console.log(`Listening on ${url}`);
+  return handler(req, res);
 });
-trapUnhandledNodeErrors();
-setupGracefulShutdown(listener, nitroApp);
-const nodeServer = {};
 
-export { K$1 as K, Mt as M, nodeServer as a, node$1 as n };
+export { K$1 as K, Mt as M, node$1 as n, vercel as v };
 //# sourceMappingURL=runtime.mjs.map

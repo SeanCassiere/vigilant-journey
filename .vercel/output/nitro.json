@@ -1,6 +1,6 @@
 {
-  "date": "2024-09-02T23:43:59.787Z",
-  "preset": "node-server",
+  "date": "2024-09-02T23:45:57.241Z",
+  "preset": "vercel",
   "framework": {
     "name": "nitro",
     "version": "2.9.7"
@@ -9,6 +9,7 @@
     "nitro": "2.9.7"
   },
   "commands": {
-    "preview": "node ./server/index.mjs"
+    "preview": "",
+    "deploy": ""
   }
 }

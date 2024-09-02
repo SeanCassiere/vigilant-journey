@@ -1,0 +1,29 @@
+{
+  "_index-UYf3HTpb.js": {
+    "file": "assets/index-UYf3HTpb.js",
+    "name": "index",
+    "dynamicImports": [
+      "app/routes/api.hello.ts?pick=Route",
+      "app/routes/api.hello.ts?pick=Route"
+    ]
+  },
+  "app/routes/api.hello.ts?pick=Route": {
+    "file": "api.hello.js",
+    "name": "api.hello",
+    "src": "app/routes/api.hello.ts?pick=Route",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-UYf3HTpb.js"
+    ]
+  },
+  "virtual:$vinxi/handler/api": {
+    "file": "api.js",
+    "name": "api",
+    "src": "virtual:$vinxi/handler/api",
+    "isEntry": true,
+    "imports": [
+      "_index-UYf3HTpb.js"
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+import{a as t}from"./assets/index-UYf3HTpb.js";import"h3";import"node:async_hooks";const s="server-fn-return-type";function o(e,n){return new Response(JSON.stringify(e),{status:200,statusText:void 0,headers:{"Content-Type":"application/json",[s]:"json"}})}const l=t("/api/hello")({GET:()=>o({message:"Hello /api/hello"})});export{l as Route};
